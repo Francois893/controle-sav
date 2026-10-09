@@ -1,0 +1,442 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Contrôle SAV Atelier & Audit client — V9.13</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#102b40;background:#f2f5f7;--blue:#0b5d8c;--green:#17864d;--yellow:#d69b17;--red:#c83c35}
+*{box-sizing:border-box}body{margin:0}.app{max-width:860px;margin:auto;padding:14px}.hero{background:linear-gradient(135deg,#123d59,#0b6697);color:#fff;padding:20px;border-radius:18px}.hero h1{margin:0;font-size:25px}.hero p{margin:5px 0 0;opacity:.85}.card{background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 12px #0000000c}
+h2{font-size:18px;margin:3px 0 13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{font-size:13px;font-weight:700;display:block;margin:10px 0 5px}
+input,select,textarea{width:100%;font:inherit;padding:12px;border:1px solid #cbd5dc;border-radius:10px;background:#fff}.btn{width:100%;border:0;border-radius:11px;padding:14px;font-weight:750;font-size:16px}.primary{background:var(--blue);color:#fff}.light{background:#e8f1f6;color:#16415b}
+.hidden{display:none}.topline{display:flex;justify-content:space-between;gap:8px;align-items:center}.pill{font-size:12px;background:#e8f1f6;padding:6px 9px;border-radius:99px}.progress{height:9px;background:#e5ebef;border-radius:9px;overflow:hidden;margin-top:9px}.bar{height:100%;background:var(--green);width:0}
+.group{margin-top:18px}.group-title{display:flex;justify-content:space-between;align-items:center;margin:0 3px 7px;font-weight:800}.point{background:#fff;border-radius:14px;padding:14px;margin:8px 0;border:1px solid #dce4e9}.point-name{font-weight:750;margin-bottom:10px}.states{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.state{border:1px solid #cbd5dc;background:#fff;border-radius:9px;padding:10px 3px;font-size:12px}.state.on.ok{background:var(--green);color:#fff}.state.on.watch{background:var(--yellow);color:#fff}.state.on.bad{background:var(--red);color:#fff}.state.on.na{background:#68747d;color:#fff}.fields{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.home-btn{min-height:105px;font-size:17px}.recent-item{padding:12px 0;border-bottom:1px solid #dde5e9}.recent-item:last-child{border-bottom:0}.recent-item button{margin-top:7px}.back{margin-bottom:10px}.photo-tools{margin-top:9px}.photo-btn{display:inline-block;background:#e8f1f6;color:#16415b;padding:9px 12px;border-radius:9px;font-size:13px;font-weight:750;cursor:pointer}.photo-btn input{display:none}.thumbs{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.thumb{position:relative}.thumb img{width:78px;height:78px;object-fit:cover;border-radius:8px;border:1px solid #ccd7dd}.thumb button{position:absolute;right:-5px;top:-5px;border:0;background:#c83c35;color:#fff;border-radius:50%;width:22px;height:22px}.print-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:5px 0 10px}.print-photo{border:1px solid #777;padding:4px;break-inside:avoid}.print-photo img{width:100%;height:45mm;object-fit:contain;display:block}.print-photo div{font-size:9px;margin-top:3px}.arrival-head{display:grid;grid-template-columns:1fr 55mm;gap:6mm}.arrival-head img{width:55mm;height:42mm;object-fit:contain}.print{display:none}
+@media(max-width:560px){.grid,.fields,.home-grid{grid-template-columns:1fr}.states{grid-template-columns:1fr 1fr}}
+@media print{body{background:#fff}.screen{display:none!important}.print{display:block!important;color:#000;font-family:Arial,sans-serif}.app{max-width:none;padding:0}.print h1{text-align:center;font-size:19px;margin:0 0 4px}.print .meta{font-size:11px;border:1px solid #555;padding:7px;margin:8px 0}.print h2{font-size:13px;background:#173f58;color:#fff;padding:6px;margin:10px 0 0}.print table{width:100%;border-collapse:collapse;font-size:9px}.print th,.print td{border:1px solid #555;padding:4px}.print th{background:#e9eef1}.print .cat td{background:#d9e0e4;font-weight:bold}.box{text-align:center;width:5%}.sign{margin-top:10px;border:1px solid #555;padding:8px;font-size:10px}.pagebreak{break-before:page;page-break-before:always}@page{size:A4;margin:8mm}}
+
+/* V9 — DM + phases Diagnostic / Contrôle final + galerie */
+.print{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#203342;background:#fff}
+.report-header{display:grid;grid-template-columns:1fr 52mm;gap:7mm;border:1px solid #d8e1e7;border-radius:10px;padding:7mm;margin-bottom:6mm;background:#f8fafb}
+.report-kicker{font-size:9px;font-weight:800;letter-spacing:1.2px;color:#527084;text-transform:uppercase}
+.report-title{font-size:24px;font-weight:800;color:#173f58;margin:1mm 0 4mm}
+.machine-badge{display:inline-block;background:#173f58;color:#fff;border-radius:5px;padding:2mm 3mm;font-size:11px;font-weight:800;margin-bottom:4mm}
+.report-meta{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm 6mm;font-size:10px}.report-meta div{border-bottom:1px solid #dbe3e8;padding-bottom:1.5mm}.report-meta b{display:block;color:#647784;font-size:8px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.5mm}
+.report-arrival{width:52mm;height:39mm;object-fit:cover;border-radius:7px;border:1px solid #d6dfe5;background:#eef2f4}.report-motif{margin-top:3mm;font-size:9.5px;padding:3mm;background:#fff;border-left:3px solid #0b5d8c;border-radius:3px}
+.section-head{display:flex;align-items:center;justify-content:space-between;background:#173f58;color:#fff;border-radius:6px;padding:3mm 4mm;margin:6mm 0 3mm;font-size:13px;font-weight:800}.section-head small{font-size:8px;font-weight:600;opacity:.8}
+.report-category{break-inside:avoid;margin:0 0 4mm}.report-category-title{font-size:10px;font-weight:800;color:#173f58;background:#eaf1f5;border-left:4px solid #0b5d8c;padding:2.2mm 3mm;border-radius:3px 3px 0 0}
+.report-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:8.5px}.report-table th{background:#f4f7f9;color:#526773;text-transform:uppercase;font-size:7px;letter-spacing:.25px;text-align:left;padding:2mm;border-bottom:1px solid #d9e2e7}.report-table td{padding:2.2mm 2mm;border-bottom:1px solid #e2e8ec;vertical-align:top;overflow-wrap:anywhere}.report-table tr:nth-child(even) td{background:#fbfcfd}.col-num{width:8mm;text-align:center}.col-point{width:50mm}.col-status{width:28mm}.col-value{width:32mm}.status-chip{display:inline-block;border-radius:99px;padding:1.1mm 2.2mm;font-size:7.5px;font-weight:800;white-space:nowrap}.status-ok{background:#e4f4eb;color:#187044}.status-watch{background:#fff3d7;color:#91620b}.status-bad{background:#fde8e6;color:#a9322d}.status-na{background:#edf0f2;color:#5d6870}.status-empty{background:#f3f5f6;color:#88949b}
+.photo-section{break-before:page}.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:5mm}.photo-card{border:1px solid #dbe3e8;border-radius:7px;padding:3mm;break-inside:avoid;background:#fff}.photo-card img{width:100%;height:65mm;object-fit:contain;background:#f4f6f7;border-radius:4px}.photo-caption{font-size:8.5px;margin-top:2mm;color:#405665}.photo-caption b{color:#173f58}
+.final-note{font-size:9px;color:#647784;background:#f4f7f9;border-radius:5px;padding:3mm;margin-bottom:4mm}.validation-box{border:1.5px solid #173f58;border-radius:7px;padding:4mm;margin-top:5mm;break-inside:avoid}.validation-title{font-size:11px;font-weight:800;color:#173f58;margin-bottom:3mm}.validation-grid{display:grid;grid-template-columns:1fr 1fr;gap:2mm 6mm;font-size:9px}.validation-sign{border-top:1px solid #d9e2e7;margin-top:4mm;padding-top:4mm;display:grid;grid-template-columns:1fr 1fr 1fr;gap:5mm;font-size:9px}.footer-note{text-align:center;color:#8998a2;font-size:7px;margin-top:5mm}
+.workflow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.phase-btn{border:1px solid #cbd5dc;background:#fff;border-radius:10px;padding:11px;font-weight:800;color:#526773}.phase-btn.active{background:#173f58;color:#fff;border-color:#173f58}.phase-intro{background:#eaf1f5;border-left:4px solid #0b5d8c;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px}.final-state{grid-template-columns:1fr 1fr}.photo-choice{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.validation-app-card{border:2px solid #173f58}.signature-wrap{margin-top:14px}.signature-pad{width:100%;height:170px;border:2px dashed #9fb0bb;border-radius:12px;background:#fff;touch-action:none;display:block}.signature-actions{display:flex;gap:8px;margin-top:8px}.signature-actions .btn{padding:10px;font-size:14px}.signature-hint{font-size:12px;color:#647784;margin-top:6px}.validation-app{display:grid;grid-template-columns:1fr 1fr;gap:10px}.validation-app label{background:#f7f9fa;border:1px solid #d9e2e7;border-radius:9px;padding:12px;margin:0;font-size:14px}.validation-app label.machine-valid{background:#eaf4ee;border-color:#a9d1ba;font-weight:900}.validation-app input[type="checkbox"]{width:auto;margin-right:8px;transform:scale(1.25)}@media(max-width:560px){.validation-app{grid-template-columns:1fr}}
+.sav-status{display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900;margin:4px 0}.sav-diagnostic{background:#fff0d8;color:#9a5a00}.sav-final{background:#e4f1fb;color:#075985}.sav-done{background:#e4f4e9;color:#176b37}.history-actions{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:7px}.danger{background:#fff0ef;color:#b62e29;border:1px solid #f0c7c4;width:auto;padding:10px 13px}
+@media print{.print{font-family:Arial,sans-serif}.report-header{border-radius:0}.section-head{border-radius:0}.report-category{break-inside:avoid}.photo-section{break-before:page}.pagebreak{break-before:page;page-break-before:always}@page{size:A4;margin:10mm}}
+
+/* V9.4 — traçabilité diagnostic -> contrôle final */
+.final-attention{border:2px solid #d69b17;background:#fff9e9;box-shadow:0 0 0 3px #fff3cd inset}
+.final-attention .point-name{color:#8a5800}
+.final-resolved{border:2px solid #9fd0b2;background:#f3fbf6}
+.diag-reminder{background:#fff0cf;border-left:4px solid #d69b17;border-radius:8px;padding:9px 10px;margin:0 0 10px;font-size:12px;color:#684500}
+.diag-reminder.bad-reminder{background:#fdebea;border-left-color:#c83c35;color:#8f2c27}
+.diag-reminder b{display:block;margin-bottom:3px}
+.diag-reminder.resolved-reminder{background:#e4f4eb;border-left-color:#17864d;color:#176b37}
+.final-alert-summary{background:#fff7df;border:1px solid #efd18b;border-radius:10px;padding:11px 12px;margin:0 0 12px;color:#795300;font-size:13px}
+.final-alert-summary.done{background:#e9f6ee;border-color:#afd7be;color:#176b37}
+.report-action-row td{background:#fff7df!important}
+.report-action-row.resolved td{background:#f0f8f3!important}
+.report-action-badge{display:inline-block;margin-top:1mm;border-radius:99px;padding:.8mm 1.8mm;font-size:6.8px;font-weight:800;background:#fff0cf;color:#8a5800}
+.report-action-badge.resolved{background:#e4f4eb;color:#176b37}
+
+
+.logo-print{height:10mm;width:auto;object-fit:contain}.pdf-page-header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #dbe3e8;padding-bottom:2.5mm;margin-bottom:4mm}.pdf-page-header span{font-size:8px;color:#647784;font-weight:700}.consigne-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;padding:9px 0;border-bottom:1px solid #e5ebef}.consigne-row:last-child{border-bottom:0}.mail-actions{grid-template-columns:1fr 1fr}.final-photo-tools{margin-top:9px}
+@media(max-width:560px){.consigne-row,.mail-actions{grid-template-columns:1fr}}
+
+/* V9.7 — rapport client Focke Meler */
+.pdf-page-header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #18b7c9;padding:0 0 3mm;margin-bottom:5mm;color:#0b4f72;font-size:9px;font-weight:800}.logo-print{width:45mm;height:12mm;object-fit:contain;object-position:left center}.report-header{border:0;border-radius:0;padding:4mm 0 5mm;background:#fff;border-bottom:1px solid #d8e4ea}.report-title{font-size:22px;color:#173f58}.report-kicker{color:#0b91aa}.machine-badge{background:#07587c}.section-head{background:linear-gradient(90deg,#07587c,#0b6b8f);border-radius:3px;border-left:4px solid #20bfd0}.report-category-title{background:#eaf5f7;border-left-color:#20bfd0}.report-table th{background:#07587c;color:#fff}.report-table td{border-bottom:1px solid #dce6eb}.summary-box{border:1px solid #cfe1e8;border-left:4px solid #20bfd0;background:#f5fafb;padding:4mm;border-radius:4px;margin:0 0 5mm;font-size:9px;line-height:1.45}.summary-title{font-size:11px;font-weight:900;color:#07587c;margin-bottom:2mm}.summary-line{margin:1.2mm 0}.summary-label{font-weight:900;color:#173f58}.summary-ok{color:#187044}.summary-watch{color:#91620b}.summary-bad{color:#a9322d}.photo-page{break-before:page;page-break-before:always}.photo-context-grid{display:grid;grid-template-columns:1fr 1fr;gap:5mm}.photo-context-card{border:1px solid #d8e4ea;border-radius:5px;overflow:hidden;break-inside:avoid;background:#fff}.photo-context-head{display:flex;justify-content:space-between;gap:2mm;align-items:center;background:#eef6f8;padding:2.5mm 3mm;font-size:9px;font-weight:900;color:#07587c}.photo-context-card img{display:block;width:100%;height:66mm;object-fit:contain;background:#f4f7f8}.photo-context-caption{padding:2.5mm 3mm;font-size:8.5px;color:#405665;min-height:12mm}.photo-phase{font-size:7px;border-radius:99px;padding:1mm 2mm;color:#fff;white-space:nowrap}.photo-phase.diag{background:#07587c}.photo-phase.final{background:#17864d}.photo-empty{font-size:9px;color:#71838e;padding:8mm;text-align:center;background:#f5f8f9;border:1px dashed #cbd9df}.report-footer{border-top:1px solid #20bfd0;margin-top:5mm;padding-top:2mm;display:flex;justify-content:space-between;color:#71838e;font-size:7px}.validation-box{border-color:#07587c}.validation-title{color:#07587c}@media print{.photo-page{break-before:page;page-break-before:always}.pdf-page-header{break-after:avoid}}
+
+/* V9.7 — rapport PDF A4 fidèle au modèle validé */
+.pdf-sheet{width:194mm;min-height:281mm;box-sizing:border-box;background:#fff;position:relative;padding:0 0 13mm;color:#173f58;font-family:Arial,sans-serif;overflow:hidden}
+.pdf-sheet+.pdf-sheet{margin-top:8mm}.pdf-sheet .report-footer{position:absolute;left:0;right:0;bottom:0;height:8mm;box-sizing:border-box}
+.brand-band{height:18mm;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #d5e4e9;margin-bottom:4mm;position:relative;overflow:hidden}
+.brand-band:after{content:"";position:absolute;right:0;top:0;width:72mm;height:18mm;background:linear-gradient(125deg,transparent 0 22%,#62d5df 22% 38%,#0d8ca9 38% 56%,#075273 56% 100%);z-index:0}
+.brand-band .logo-print{width:40mm;height:12mm;z-index:1}.brand-copy{z-index:1;color:#fff;text-align:right;padding-right:4mm;font-size:7px;line-height:1.2}.brand-copy b{display:block;font-size:9px}
+.pdf-main-title{font-size:20px;font-weight:900;letter-spacing:.2px;color:#173f58;margin:0}.pdf-subtitle{font-size:9px;color:#1599b0;font-weight:700;margin-top:.5mm}
+.pdf-topline{display:flex;justify-content:space-between;align-items:end;margin-bottom:2mm}.pdf-idline{display:flex;gap:6mm;border-top:1px solid #dbe5e9;border-bottom:1px solid #dbe5e9;padding:2mm 0;margin-bottom:3mm;font-size:7.5px;color:#405766}.pdf-idline b{color:#173f58}
+.info-grid{display:grid;grid-template-columns:1fr 1.25fr;gap:3mm;background:#f5f8f9;border-radius:3px;padding:3mm;margin-bottom:3mm}.info-card{font-size:7.5px}.info-card-title{font-size:8.5px;font-weight:900;color:#07587c;border-bottom:1px solid #cfe0e6;padding-bottom:1.5mm;margin-bottom:1.5mm;text-transform:uppercase}.info-row{display:grid;grid-template-columns:22mm 1fr;gap:2mm;margin:.7mm 0}.info-row b{color:#607581}.reason-box,.conclusion-box{background:#eef6f8;border-left:4px solid #168fb0;border-radius:3px;padding:2.5mm 3mm;margin:3mm 0;font-size:8px;line-height:1.35}.conclusion-box{background:#edf8f2;border-left-color:#1b9860}.reason-box b,.conclusion-box b{color:#07587c}
+.model-section-title{font-size:12px;font-weight:900;color:#07587c;border-left:4px solid #168fb0;padding-left:2mm;margin:3mm 0 2mm;text-transform:uppercase}.model-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:7.2px;margin-bottom:2mm}.model-table th{background:#176886;color:#fff;padding:1.7mm 1.5mm;text-transform:uppercase;font-size:6.3px}.model-table td{padding:1.6mm 1.5mm;border-bottom:1px solid #dce5e9;vertical-align:middle}.model-table tr:nth-child(even) td{background:#f8fafb}.model-cat td{background:#07587c!important;color:#fff;font-weight:900;padding:1.3mm 2mm}.model-num{width:9mm;text-align:center}.model-point{width:47mm}.model-result{width:28mm;text-align:center}.model-photo{width:18mm;text-align:center}.dot-status{display:inline-flex;align-items:center;justify-content:center;width:5mm;height:5mm;border-radius:50%;color:#fff;font-size:7px;font-weight:900}.dot-ok{background:#198b5b}.dot-watch{background:#f0ae16}.dot-bad{background:#d63c3c}.dot-empty{background:#87959c}.mini-thumb{width:12mm;height:8mm;object-fit:cover;border-radius:2px;border:1px solid #cad8de;margin-left:1mm}.diag-history{display:block;font-size:6.2px;color:#8a6500;margin-top:.7mm;font-weight:700}.diag-history.fixed{color:#18804f}
+.final-summary-mini{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin:2mm 0 3mm}.final-summary-mini>div{font-size:7px;padding:2mm 2.5mm;border-radius:3px;background:#f3f7f8}.final-summary-mini .ok{border-left:3px solid #198b5b}.final-summary-mini .watch{border-left:3px solid #f0ae16}.final-summary-mini .bad{border-left:3px solid #d63c3c}
+.validation-model{display:grid;grid-template-columns:1.2fr .8fr;gap:3mm;border-top:1px solid #cfe0e6;margin-top:3mm;padding-top:3mm;font-size:7.5px}.validation-model h3{font-size:9px;color:#07587c;margin:0 0 1.5mm}.validation-checks{display:grid;grid-template-columns:1fr 1fr;gap:1mm}.signature-model{border-left:1px solid #d5e2e7;padding-left:3mm}.signature-model img{max-width:38mm;max-height:12mm;object-fit:contain}
+.photo-intro{display:grid;grid-template-columns:1fr 1fr;gap:3mm;margin:3mm 0}.photo-intro>div{padding:2.5mm;border-radius:3px;font-size:8px;font-weight:800}.photo-intro .before{background:#eaf4f8;color:#07587c}.photo-intro .after{background:#e9f7ef;color:#177346}.photo-pairs{display:grid;grid-template-columns:1fr 1fr;gap:3mm}.model-photo-card{border:1px solid #d5e1e6;border-radius:3px;overflow:hidden;break-inside:avoid}.model-photo-head{display:flex;justify-content:space-between;align-items:center;padding:1.5mm 2mm;background:#eef5f7;font-size:7.5px;font-weight:900;color:#07587c}.model-photo-card.final .model-photo-head{background:#edf7f1;color:#177346}.model-photo-card img{width:100%;height:43mm;display:block;object-fit:cover;background:#f3f5f6}.model-photo-caption{padding:1.8mm 2mm;font-size:7px;min-height:8mm;color:#405766}.phase-pill{font-size:6px;color:#fff;background:#07587c;border-radius:99px;padding:.7mm 1.5mm}.final .phase-pill{background:#198b5b}.photo-page-title{font-size:20px;font-weight:900;color:#07587c;margin:0}.photo-page-sub{font-size:9px;color:#1599b0;margin-bottom:2mm}
+@media print{.pdf-sheet{page-break-after:always;break-after:page}.pdf-sheet:last-child{page-break-after:auto}.pdf-sheet+.pdf-sheet{margin-top:0}}
+
+
+/* V9.8 — exports séparés + photo arrivée dans l’en-tête */
+.info-grid.with-arrival{grid-template-columns:.9fr 1.05fr 42mm;align-items:stretch}
+.arrival-info-card{display:flex;flex-direction:column;min-width:0}.arrival-info-card .info-card-title{white-space:nowrap}
+.arrival-info-photo{width:100%;height:29mm;object-fit:cover;border:1px solid #cfdde3;border-radius:3px;background:#eef3f5;display:block}
+.arrival-info-empty{height:29mm;display:flex;align-items:center;justify-content:center;border:1px dashed #b9cbd3;border-radius:3px;background:#f4f7f8;color:#71838e;font-size:7px;text-align:center;padding:2mm}
+.pdf-sheet.compact .brand-band{height:16mm;margin-bottom:3mm}.pdf-sheet.compact .pdf-main-title{font-size:18px}.pdf-sheet.compact .info-grid{padding:2.2mm;margin-bottom:2mm}.pdf-sheet.compact .arrival-info-photo,.pdf-sheet.compact .arrival-info-empty{height:25mm}.pdf-sheet.compact .reason-box,.pdf-sheet.compact .conclusion-box{margin:2mm 0;padding:2mm 2.5mm}.pdf-sheet.compact .model-section-title{margin:2mm 0 1.5mm}.pdf-sheet.compact .model-table{font-size:6.8px}.pdf-sheet.compact .model-table th{padding:1.35mm 1.2mm}.pdf-sheet.compact .model-table td{padding:1.25mm 1.2mm}.pdf-sheet.compact .model-cat td{padding:1mm 1.5mm}.pdf-sheet.compact .final-summary-mini{margin:1.5mm 0 2mm}.pdf-sheet.compact .validation-model{margin-top:2mm;padding-top:2mm}.pdf-sheet.compact .signature-model img{max-height:10mm}
+
+/* V9.9 — lisibilité renforcée des lignes PDF sans agrandir les pages */
+.pdf-sheet.compact .model-table{font-size:7.8px;line-height:1.24;color:#263f4e}
+.pdf-sheet.compact .model-table th{font-size:7px;line-height:1.15;padding:1.15mm 1.25mm;letter-spacing:.05px}
+.pdf-sheet.compact .model-table td{padding:1.05mm 1.25mm;line-height:1.24}
+.pdf-sheet.compact .model-table .model-point{font-size:8.15px;font-weight:800;color:#173f58}
+.pdf-sheet.compact .model-table td:nth-child(4){font-size:7.7px;color:#304b5a;font-weight:500}
+.pdf-sheet.compact .model-cat td{font-size:7.5px;line-height:1.1;padding:.85mm 1.5mm;letter-spacing:.1px}
+.pdf-sheet.compact .diag-history{font-size:6.9px;line-height:1.18;margin-top:.45mm}
+.pdf-sheet.compact .dot-status{width:5.4mm;height:5.4mm;font-size:7.5px}
+.pdf-sheet.compact .mini-thumb{width:11mm;height:7mm}
+.pdf-sheet.compact .pdf-idline{font-size:8px;padding:1.6mm 0;margin-bottom:2.2mm}
+.pdf-sheet.compact .info-card{font-size:7.8px}.pdf-sheet.compact .info-card-title{font-size:8.7px}
+.pdf-sheet.compact .reason-box,.pdf-sheet.compact .conclusion-box{font-size:8.2px;line-height:1.28}
+.pdf-sheet.compact .final-summary-mini>div{font-size:7.5px;line-height:1.25;padding:1.6mm 2mm}
+.pdf-sheet.compact .validation-model{font-size:7.8px;line-height:1.2}
+
+/* V9.10 — validation finale simplifiée + observations PDF plus lisibles */
+.validation-app-three{grid-template-columns:1fr 1fr 1fr}
+.validation-checks-three{grid-template-columns:1fr;gap:1.4mm;font-size:8.2px}
+.pdf-sheet.compact .model-table td:nth-child(4){font-size:8.6px;line-height:1.34;color:#173f58;font-weight:600;letter-spacing:.01px}
+.pdf-sheet.compact .model-table th:nth-child(4){font-size:7.25px}
+.pdf-sheet.compact .model-point{width:43mm}
+.pdf-sheet.compact .model-result{width:25mm}
+.pdf-sheet.compact .model-photo{width:16mm}
+@media(max-width:700px){.validation-app-three{grid-template-columns:1fr}}
+/* V9.11 — noms de points éditables + observations PDF plus aérées */
+.consigne-row-v2{grid-template-columns:1fr 1.35fr;align-items:start}.consigne-name-label,.consigne-text-label{font-size:11px;color:#647784;font-weight:800;margin:0 0 5px;text-transform:uppercase;letter-spacing:.3px}
+.pdf-sheet.compact .model-table td:nth-child(4){font-size:8.35px;line-height:1.52;font-weight:500;letter-spacing:0;overflow-wrap:anywhere;word-break:normal;white-space:normal;vertical-align:top}
+.pdf-sheet.compact .model-table .model-point{line-height:1.35;vertical-align:top}
+@media(max-width:560px){.consigne-row-v2{grid-template-columns:1fr}}
+/* V9.12 — légende couleurs diagnostic */
+.diag-legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:12px 0 14px;padding:10px 12px;background:#f7f9fa;border:1px solid #dce4e9;border-radius:10px;font-size:12px;font-weight:800;color:#405665}
+.diag-legend-item{display:flex;align-items:center;gap:6px}.diag-legend-dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex:0 0 12px}.diag-legend-dot.ok{background:var(--green)}.diag-legend-dot.watch{background:var(--yellow)}.diag-legend-dot.bad{background:var(--red)}
+.pdf-diag-legend{display:flex;justify-content:flex-end;gap:4mm;align-items:center;margin:1.5mm 0 2mm;font-size:6.8px;font-weight:700;color:#405665}.pdf-diag-legend .diag-legend-dot{width:3mm;height:3mm;flex-basis:3mm}
+
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script></head><body><main class="app">
+<div class="screen"><div class="hero"><h1>🔧 Contrôle SAV Atelier</h1><p>Diagnostic réception • Validation avant retour client</p></div>
+<section id="home" class="card">
+<h2>Accueil</h2>
+<div class="home-grid">
+<button class="btn primary home-btn" onclick="openNew()">➕<br>Nouvelle fiche</button>
+<button class="btn primary home-btn" onclick="openAudit()">🔎<br>Audit client</button><button class="btn light home-btn" onclick="openHistoryHome()">📚<br>Historique</button>
+<button class="btn light home-btn" onclick="openConsignes()">⚙️<br>Consignes</button>
+</div>
+<h2 style="margin-top:20px">Dernières fiches</h2><div id="recentList"><span class="small">Chargement…</span></div>
+</section>
+<section id="setup" class="card hidden"><button class="btn light back" onclick="goHome()">← Accueil</button><h2 id="setupTitle">① Réception de la machine</h2><div class="grid"><div><label>Client</label><input id="client" placeholder="Nom du client"></div><div><label>N° DM</label><input id="dm" placeholder="Ex. DM 12345"></div><div><label>Référence machine</label><input id="machineRef" placeholder="Ex. M020000"></div><div><label>N° série</label><input id="serial" placeholder="Numéro de série"></div><div><label>Gamme</label><select id="machine"><option>Micron</option><option>Micron+</option><option>B4</option><option>StarBi</option></select></div><div><label>Système</label><select id="system"><option value="piston">Piston</option><option value="gear">Engrenage</option></select></div><div><label>Type / capacité de bac</label><select id="tank"><option>5 L</option><option>10 L</option><option>20 L</option><option>Autre</option></select></div><div><label>Technicien</label><input id="tech" placeholder="Nom"></div></div><label id="reasonLabel">Motif du retour</label><textarea id="reason" rows="2"></textarea>
+<label id="arrivalLabel">Photo de la machine à l’arrivée / sur site</label><div class="photo-choice"><label class="photo-btn">📷 Prendre une photo<input type="file" accept="image/*" capture="environment" onchange="setArrival(this.files[0])"></label><label class="photo-btn">🖼️ Choisir dans la galerie<input type="file" accept="image/*" onchange="setArrival(this.files[0])"></label></div>
+<img id="arrivalPreview" style="display:none;width:100%;max-height:260px;object-fit:contain;border-radius:12px;margin-top:8px"><button class="btn primary" style="margin-top:14px" onclick="start()">Commencer le diagnostic →</button></section>
+<section id="work" class="hidden"><div class="card"><button class="btn light back" onclick="goHome()">← Accueil</button><div class="topline"><div><b id="title"></b><br><span id="liveSavStatus" class="sav-status sav-diagnostic">🟠 Diagnostic en cours</span></div><span class="pill" id="counter"></span></div><div class="progress"><div id="bar" class="bar"></div></div><div class="workflow" id="workflowTabs"><button id="diagTab" class="phase-btn active" onclick="showPhase('diagnostic')">② Diagnostic</button><button id="finalTab" class="phase-btn" onclick="showPhase('final')">③ Contrôle final</button></div></div><div id="diagnosticPanel"><div class="phase-intro"><b id="diagIntro">Diagnostic à réception</b><br>Contrôlez l'état de la machine et notez les défauts constatés.</div><div id="mobile"></div><div class="diag-legend" aria-label="Légende des couleurs du diagnostic"><span class="diag-legend-item"><i class="diag-legend-dot ok"></i>Vert — RAS</span><span class="diag-legend-item"><i class="diag-legend-dot watch"></i>Jaune — À surveiller</span><span class="diag-legend-item"><i class="diag-legend-dot bad"></i>Rouge — À remplacer</span></div><button id="toFinalButton" class="btn primary" onclick="showPhase('final')">Passer au contrôle final →</button></div><div id="finalPanel" class="hidden"><div class="phase-intro"><b>Contrôle final avant retour client</b><br>Reprenez chaque point après réparation. Renseignez la mesure et validez OK ou NOK.</div><div id="finalMobile"></div>
+<div class="card validation-app-card">
+<h2>④ Validation avant expédition</h2>
+<div class="validation-app validation-app-three">
+<label><input type="checkbox" id="valClean" onchange="validationChanged()"> Équipement nettoyé</label>
+<label><input type="checkbox" id="valNoFault" onchange="validationChanged()"> Aucun défaut actif</label>
+<label class="machine-valid"><input type="checkbox" id="valMachine" onchange="machineValidationChanged(this)"> Équipement validé</label>
+</div>
+<div class="grid" style="margin-top:12px">
+<div><label>Technicien</label><input id="validationTech" readonly></div>
+<div><label>Date de validation</label><input id="validationDate" type="date" onchange="paper()"></div>
+</div>
+<div class="signature-wrap"><label>✍️ Signature du technicien</label><canvas id="signaturePad" class="signature-pad"></canvas><div class="signature-actions"><button type="button" class="btn light" onclick="clearSignature()">Effacer la signature</button></div><div class="signature-hint">Signez directement avec le doigt ou la souris.</div></div>
+<p class="small">Ces informations sont enregistrées et reprises automatiquement dans le rapport PDF.</p>
+</div>
+<button class="btn light" onclick="showPhase('diagnostic')">← Retour au diagnostic</button></div><div class="card actions">
+<button class="btn primary" onclick="saveToSupabase()">💾 Enregistrer</button>
+<button class="btn light" onclick="paper();window.print()">🖨️ Imprimer / PDF</button>
+<button class="btn light" onclick="sharePhaseReport('diagnostic')">✉️ Envoyer le diagnostic</button><button class="btn light audit-hide" onclick="sharePhaseReport('final')">✉️ Envoyer le contrôle final</button><button class="btn light audit-hide" onclick="shareReport()">📤 Partager le rapport complet</button>
+<button class="btn light" onclick="showHistory()">📚 Historique</button>
+<button class="btn primary" onclick="location.reload()">＋ Nouvelle fiche</button>
+</div></section>
+<section id="history" class="card hidden"><button class="btn light back" onclick="goHome()">← Accueil</button><h2>📚 Historique des fiches</h2><input id="historySearch" placeholder="Rechercher client, N° DM, n° série, machine…" oninput="filterHistory()"><div id="historyList"></div></section>
+<section id="consignes" class="card hidden"><button class="btn light back" onclick="goHome()">← Accueil</button><h2>⚙️ Consignes</h2><p>Définissez ici la consigne interne de chaque point. Ces informations restent dans l’application et ne sont jamais imprimées dans les PDF.</p><div id="consignesList"></div><button class="btn primary" style="margin-top:14px" onclick="saveConsignes()">💾 Enregistrer les consignes</button></section>
+</div>
+<section id="paper" class="print"></section></main>
+<script>
+const SB_URL="https://ocnksvipobuongjvzhne.supabase.co";
+const SB_KEY="sb_publishable_icxMkaFJj5GCsmFVOGnwTw_RG97_RYy";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+let arrivalBlob=null, arrivalPrintUrl="", historyRows=[], currentFicheId=null;
+let signatureData="", signatureDirty=false, signatureDrawing=false;
+let auditMode=false;
+const AUDIT_TAG="[AUDIT CLIENT] ";
+const auditGroups={"TUYAUX CHAUFFANTS":["ÉTAT GÉNÉRAL DES TUYAUX","RACCORDEMENTS HYDRAULIQUES","FUITES DE COLLE","CONNEXIONS ÉLECTRIQUES","CHAUFFAGE / TEMPÉRATURES"],"APPLICATEURS":["ÉTAT GÉNÉRAL DES APPLICATEURS","FUITES DE COLLE APPLICATEURS","ÉTAT DES BUSES","FONCTIONNEMENT ÉLECTROVANNES","CHAUFFAGE / TEMPÉRATURES APPLICATEURS","QUALITÉ D’APPLICATION DE COLLE"]};
+const common={
+"VUE ENSEMBLE":["CARTER","FEEDER"],
+"ELECTRIQUE":["CONNECTION ELECTRIQUE","SORTIE ELECTRIQUE","CAPTEUR","BOBINE","BALISE"]};
+const piston=["FILTRE","VERIN","ELECTROVANNE","VANNE DEPRESSURISATION","VALVE","RACCORD","DETENDEUR / MANO","AXE DE POMPE","ISOLANT","DISTRIBUTEUR","JOINT CUVE"];
+const gear=["FILTRE","ACCOUPLEMENT","FUITE / POMPE","BY PASS","VERIN NS","ISOLANT","DISTRIBUTEUR","JOINT CUVE"];
+let status={}, finalStatus={}, photos={}, finalPhotos={}, total=0, controlIds={};
+const MELER_LOGO="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAkACQAAD/4QECRXhpZgAATU0AKgAAAAgABwEOAAIAAAALAAAAYgESAAMAAAABAAEAAAEaAAUAAAABAAAAbgEbAAUAAAABAAAAdgEoAAMAAAABAAIAAAEyAAIAAAAUAAAAfodpAAQAAAABAAAAkgAAAABTY3JlZW5zaG90AAAAAACQAAAAAQAAAJAAAAABMjAyNjoxMDowMSAyMTo1NzoyMgAABZADAAIAAAAUAAAA1JKGAAcAAAASAAAA6KABAAMAAAAB//8AAKACAAQAAAABAAABmKADAAQAAAABAAAAtAAAAAAyMDI2OjEwOjAxIDIxOjU3OjIyAEFTQ0lJAAAAU2NyZWVuc2hvdP/tAG5QaG90b3Nob3AgMy4wADhCSU0EBAAAAAAANhwBWgADGyVHHAIAAAIAAhwCeAAKU2NyZWVuc2hvdBwCPAAGMjE1NzIyHAI3AAgyMDI2MTAwMThCSU0EJQAAAAAAEFvvvuRRFv7wmphCrg2gvXH/4gIoSUNDX1BST0ZJTEUAAQEAAAIYYXBwbAQAAABtbnRyUkdCIFhZWiAH5gABAAEAAAAAAABhY3NwQVBQTAAAAABBUFBMAAAAAAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLWFwcGwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApkZXNjAAAA/AAAADBjcHJ0AAABLAAAAFB3dHB0AAABfAAAABRyWFlaAAABkAAAABRnWFlaAAABpAAAABRiWFlaAAABuAAAABRyVFJDAAABzAAAACBjaGFkAAAB7AAAACxiVFJDAAABzAAAACBnVFJDAAABzAAAACBtbHVjAAAAAAAAAAEAAAAMZW5VUwAAABQAAAAcAEQAaQBzAHAAbABhAHkAIABQADNtbHVjAAAAAAAAAAEAAAAMZW5VUwAAADQAAAAcAEMAbwBwAHkAcgBpAGcAaAB0ACAAQQBwAHAAbABlACAASQBuAGMALgAsACAAMgAwADIAMlhZWiAAAAAAAAD21QABAAAAANMsWFlaIAAAAAAAAIPfAAA9v////7tYWVogAAAAAAAASr8AALE3AAAKuVhZWiAAAAAAAAAoOAAAEQsAAMi5cGFyYQAAAAAAAwAAAAJmZgAA8qcAAA1ZAAAT0AAACltzZjMyAAAAAAABDEIAAAXe///zJgAAB5MAAP2Q///7ov///aMAAAPcAADAbv/AABEIALQBmAMBIgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUEBAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2wBDAAICAgICAgMCAgMFAwMDBQYFBQUFBggGBgYGBggKCAgICAgICgoKCgoKCgoMDAwMDAwODg4ODg8PDw8PDw8PDw//2wBDAQIDAwQEBAcEBAcQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/3QAEABr/2gAMAwEAAhEDEQA/AP38ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/0P38ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/0f38ooooAKKKKACiiigAooooAKKKKACiiigAoooo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NH1yC3S1kuNMmiQXEUZJQSpNFKpZdxAZQDjg5AGPtqii4H5O/wDDoD9n7/obPFH/AH/sv/kSj/h0B+z9/wBDZ4o/7/2X/wAiV+sVFFwPyd/4dAfs/f8AQ2eKP+/9l/8AIlH/AA6A/Z+/6GzxR/3/ALL/AORK/WKii4Hmfwg+GOjfBn4b6F8MPD1zcXmm+H4TBDNdlGndWdny5jVFzlj0UV8x/Hv/AIJ9fAD9oHxTL441uPUPD+v3WPtVzpE0cQumUYDTRzRSoXwMFlCsf4ia+6KKQH5O/wDDoD9n7/obPFH/AH/sv/kSj/h0B+z9/wBDZ4o/7/2X/wAiV+sVFO4H5O/8OgP2fv8AobPFH/f+y/8AkSj/AIdAfs/f9DZ4o/7/ANl/8iV+sVFFwPhL9nX9gP4Vfs1/EFviN4N13WtR1BrOaxMV/JbPD5czIzHEUEbbgUGPmx14r3f9oX4CeFf2kPh4/wANfGN9e6dpz3UF2ZbBo1m3wZ2jMsci4O7n5c+9e7UUXA/J3/h0B+z9/wBDZ4o/7/2X/wAiV+r6IERUHRQB+VPoouAUUUUgPkn9pj9jX4T/ALUh0m98bveaXqujbo4r/TWijuHt3yTBIZY5FaMMdy5GVOcEBmB+W9O/4JJfA7SNQttW0nxp4rtL2ylSaCaK5s0kiljYMjoy2mVZSAQRyDX6tUU7gZel2lzp+mWlhd3kmoz20SRyXMwRZZ2RQDI4jVEDMRk7VVcngAcVqUUUgM6+0+11JYY7xN6wTJOo7b4zuQ/gcH6ivm74+r4q125sPD+h6Te3dlbjz5ZIbeSSNpWyqjcqkHYuf++vavqKiuvD13Rmp2vY8XM8uWOw8qHNy81rtbtLofml/wAIJ44/6F3Uf/ASb/4ij/hBPHH/AELuo/8AgJN/8RX6W0V7n9s1P5Efnv8AqHh/+f0vuPzS/wCEE8cf9C7qP/gJN/8AEUf8IJ44/wChd1H/AMBJv/iK/S2ij+2an8iD/UPD/wDP6X3HwL8O/B3i+y8caJd3mh31vBFdRs8kltKiKoPJLFQAPrX31RRXk4vFSxElKStY+2yXJqeWUpUqc3Lmd9fQKKKK84+mCiiigD//1/38ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/0P38ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/0f38ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/0v38ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/2Q==";
+let consignes=JSON.parse(localStorage.getItem("savConsignes")||"{}"); let pointLabels=JSON.parse(localStorage.getItem("savPointLabels")||"{}"); const pointName=key=>(pointLabels[key]||key).trim()||key; const $=s=>document.querySelector(s);
+function groups(){let o={"VUE ENSEMBLE":common["VUE ENSEMBLE"]};o[system.value==="piston"?"SYSTEME PISTON":"SYSTEME ENGRENAGE"]=system.value==="piston"?piston:gear;o["ELECTRIQUE"]=common["ELECTRIQUE"];if(auditMode)Object.assign(o,auditGroups);return o}
+function esc(s){return String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function getSavStage(){
+  if(auditMode)return Object.keys(status).filter(k=>status[k]).length>=Object.values(groups()).flat().length?"termine":"diagnostic";
+  if(document.getElementById("valMachine")?.checked)return "termine";
+  const expected=Object.values(groups()).flat().length;
+  const done=Object.keys(status).filter(k=>status[k]).length;
+  return expected>0&&done>=expected?"controle_final":"diagnostic";
+}
+function stageInfo(stage){
+  return stage==="termine"?{text:"🟢 Terminé",cls:"sav-done"}:stage==="controle_final"?{text:"🔵 Contrôle final en cours",cls:"sav-final"}:{text:"🟠 Diagnostic en cours",cls:"sav-diagnostic"};
+}
+function refreshSavStatus(){
+  const info=stageInfo(getSavStage()),el=document.getElementById("liveSavStatus");
+  if(el){el.textContent=info.text;el.className="sav-status "+info.cls}
+}
+function start(){configureMode();hidePages();work.classList.remove("hidden");title.textContent=machine.value+" • "+(system.value==="piston"?"Piston":"Engrenage")+" • "+tank.value+(dm.value?" • "+dm.value:"");render();if(!auditMode)renderFinal();showPhase("diagnostic");refreshSavStatus()}
+function render(){let h="",idx=0;total=Object.values(groups()).flat().length;for(const [g,items] of Object.entries(groups())){h+=`<div class="group"><div class="group-title"><span>${g}</span><span class="pill">${items.length} points</span></div>`;items.forEach(x=>{let i=idx++;h+=`<div class="point"><div class="point-name">${i+1}. ${esc(pointName(x))}</div><div class="states">${[["ok","✓ Bon état"],["watch","⚠ À surveiller"],["bad","✕ À remplacer"],["na","— N/A"]].map(a=>`<button class="state ${a[0]}" onclick="pick(${i},'${a[0]}',this)">${a[1]}</button>`).join("")}</div><div class="fields"><input id="v${i}" placeholder="Valeur relevée / unité" oninput="paper()"><input id="n${i}" placeholder="Commentaire / action" oninput="paper()"></div><div class="photo-tools"><div class="photo-choice"><label class="photo-btn">📷 Photo<input type="file" accept="image/*" capture="environment" onchange="addPhotos(${i},this.files)"></label><label class="photo-btn">🖼️ Galerie<input type="file" accept="image/*" multiple onchange="addPhotos(${i},this.files)"></label></div><div class="thumbs" id="ph${i}"></div></div></div>`});h+="</div>"}mobile.innerHTML=h;update()}
+function renderFinal(){
+  let h="",idx=0,flagged=Object.keys(status).filter(i=>status[i]==="watch"||status[i]==="bad"),unresolved=flagged.filter(i=>finalStatus[i]!=="ok");
+  if(flagged.length)h+=`<div class="final-alert-summary ${unresolved.length?"":"done"}"><b>${unresolved.length?`⚠ ${unresolved.length} point(s) issu(s) du diagnostic à revalider`:"✓ Toutes les anomalies du diagnostic ont été revalidées"}</b><br>${unresolved.length?"Les points concernés sont mis en évidence ci-dessous. Ils doivent être validés OK avant de pouvoir valider la machine.":"Les points concernés restent identifiés pour conserver la traçabilité."}</div>`;
+  for(const [g,items] of Object.entries(groups())){
+    h+=`<div class="group"><div class="group-title"><span>${g}</span><span class="pill">${items.length} points</span></div>`;
+    items.forEach(x=>{
+      let i=idx++,needs=status[i]==="watch"||status[i]==="bad",resolved=needs&&finalStatus[i]==="ok",diagNote=$("#n"+i)?.value||"";
+      let reminder="";
+      if(needs){
+        const label=resolved?"✓ Anomalie diagnostic corrigée":status[i]==="bad"?"✕ Action requise au diagnostic":"⚠ Point signalé au diagnostic";
+        reminder=`<div class="diag-reminder ${status[i]==="bad"&&!resolved?"bad-reminder":""} ${resolved?"resolved-reminder":""}"><b>${label}</b>${diagNote?esc(diagNote):"Ce point doit être recontrôlé et validé OK avant expédition."}</div>`;
+      }
+      h+=`<div class="point ${needs?(resolved?"final-resolved":"final-attention"):""}" id="finalPoint${i}"><div class="point-name">${i+1}. ${esc(pointName(x))}</div>${reminder}<div class="small" style="margin-bottom:8px"><b>Consigne :</b> ${esc(consignes[x]||"À définir")}</div><div class="states final-state"><button class="state ok ${finalStatus[i]==="ok"?"on":""}" onclick="pickFinal(${i},'ok',this)">✓ OK</button><button class="state bad ${finalStatus[i]==="bad"?"on":""}" onclick="pickFinal(${i},'bad',this)">✕ NOK</button></div><div class="fields"><input id="fv${i}" placeholder="Valeur mesurée / unité" value="${esc($("#fv"+i)?.value||"")}" oninput="paper()"><input id="fn${i}" placeholder="Commentaire final" value="${esc($("#fn"+i)?.value||"")}" oninput="paper()"></div><div class="final-photo-tools"><div class="photo-choice"><label class="photo-btn">📷 Photo finale<input type="file" accept="image/*" capture="environment" onchange="addFinalPhotos(${i},this.files)"></label><label class="photo-btn">🖼️ Galerie<input type="file" accept="image/*" multiple onchange="addFinalPhotos(${i},this.files)"></label></div><div class="thumbs" id="fph${i}"></div></div></div>`;
+    });
+    h+="</div>";
+  }
+  finalMobile.innerHTML=h;Object.keys(finalPhotos).forEach(i=>drawFinalPhotos(Number(i)))
+}
+function initSignaturePad(){
+  const canvas=document.getElementById("signaturePad"); if(!canvas)return;
+  const ratio=Math.max(window.devicePixelRatio||1,1), rect=canvas.getBoundingClientRect();
+  const saved=signatureData;
+  canvas.width=Math.max(1,Math.floor(rect.width*ratio));canvas.height=Math.max(1,Math.floor(170*ratio));
+  const ctx=canvas.getContext("2d");ctx.scale(ratio,ratio);ctx.lineWidth=2.2;ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle="#173f58";
+  if(saved){const im=new Image();im.onload=()=>ctx.drawImage(im,0,0,rect.width,170);im.src=saved}
+  const pos=e=>{const r=canvas.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top}};
+  const down=e=>{e.preventDefault();signatureDrawing=true;let q=pos(e);ctx.beginPath();ctx.moveTo(q.x,q.y)};
+  const move=e=>{if(!signatureDrawing)return;e.preventDefault();let q=pos(e);ctx.lineTo(q.x,q.y);ctx.stroke()};
+  const up=e=>{if(!signatureDrawing)return;e.preventDefault();signatureDrawing=false;signatureData=canvas.toDataURL("image/png");signatureDirty=true;paper()};
+  canvas.onpointerdown=down;canvas.onpointermove=move;canvas.onpointerup=up;canvas.onpointercancel=up;canvas.onpointerleave=e=>{if(signatureDrawing)up(e)};
+}
+function clearSignature(){signatureData="";signatureDirty=true;const canvas=document.getElementById("signaturePad");if(canvas){const ctx=canvas.getContext("2d");ctx.clearRect(0,0,canvas.width,canvas.height)}paper()}
+function validationChanged(){refreshSavStatus();paper()}
+function unresolvedDiagnosticActions(){return Object.keys(status).filter(i=>(status[i]==="watch"||status[i]==="bad")&&finalStatus[i]!=="ok")}
+function machineValidationChanged(el){
+  const required=[valClean,valNoFault];
+  if(el.checked&&!required.every(x=>x.checked)){
+    el.checked=false;alert("Pour valider l’équipement, coche d’abord « Équipement nettoyé » et « Aucun défaut actif ».");
+  }else if(el.checked&&unresolvedDiagnosticActions().length){
+    el.checked=false;alert("Validation impossible : "+unresolvedDiagnosticActions().length+" point(s) signalé(s) au diagnostic doivent encore être recontrôlés et validés OK.");
+  }
+  refreshSavStatus();paper()
+}
+function syncValidationHeader(){if(document.getElementById("validationTech"))validationTech.value=tech.value||"";if(document.getElementById("validationDate")&&!validationDate.value)validationDate.value=new Date().toISOString().slice(0,10)}
+function showPhase(phase){if(auditMode)phase="diagnostic";const fin=phase==="final";if(fin){renderFinal();syncValidationHeader();setTimeout(initSignaturePad,60);}diagnosticPanel.classList.toggle("hidden",fin);finalPanel.classList.toggle("hidden",!fin);diagTab.classList.toggle("active",!fin);finalTab.classList.toggle("active",fin);window.scrollTo({top:0,behavior:"smooth"})}
+function addPhotos(i,files){photos[i]??=[];[...files].forEach(f=>{let r=new FileReader();r.onload=e=>{photos[i].push(e.target.result);drawPhotos(i);paper()};r.readAsDataURL(f)});}
+function drawPhotos(i){let el=document.getElementById("ph"+i);if(!el)return;el.innerHTML=(photos[i]||[]).map((p,k)=>`<div class="thumb"><img src="${p}"><button onclick="removePhoto(${i},${k})">×</button></div>`).join("")}
+function removePhoto(i,k){photos[i].splice(k,1);drawPhotos(i);paper()}
+function addFinalPhotos(i,files){finalPhotos[i]??=[];[...files].forEach(f=>{let r=new FileReader();r.onload=e=>{finalPhotos[i].push(e.target.result);drawFinalPhotos(i);paper()};r.readAsDataURL(f)});}
+function drawFinalPhotos(i){let el=document.getElementById("fph"+i);if(!el)return;el.innerHTML=(finalPhotos[i]||[]).map((p,k)=>`<div class="thumb"><img src="${p}"><button onclick="removeFinalPhoto(${i},${k})">×</button></div>`).join("")}
+function removeFinalPhoto(i,k){finalPhotos[i].splice(k,1);drawFinalPhotos(i);paper()}
+
+
+function hidePages(){["home","setup","work","history","consignes"].forEach(id=>document.getElementById(id)?.classList.add("hidden"))}
+function goHome(){hidePages();document.getElementById("home").classList.remove("hidden");loadRecent()}
+function configureMode(){
+  document.getElementById("setupTitle").textContent=auditMode?"① Informations de l'audit client":"① Réception de la machine";
+  document.getElementById("reasonLabel").textContent=auditMode?"Motif / contexte de l'audit":"Motif du retour";
+  document.getElementById("diagIntro").textContent=auditMode?"Audit technique sur site":"Diagnostic à réception";
+  document.getElementById("workflowTabs").classList.toggle("hidden",auditMode);
+  document.getElementById("toFinalButton").classList.toggle("hidden",auditMode);
+  document.querySelectorAll(".audit-hide").forEach(el=>el.classList.toggle("hidden",auditMode));
+  document.querySelector("#work .workflow")?.classList.toggle("hidden",auditMode);
+}
+function resetNew(){currentFicheId=null;status={};finalStatus={};photos={};finalPhotos={};controlIds={};arrivalBlob=null;arrivalPrintUrl="";signatureData="";document.querySelectorAll('#setup input:not([type=file]),#setup textarea').forEach(e=>e.value='');arrivalPreview.style.display='none';}
+function openNew(){auditMode=false;resetNew();configureMode();hidePages();document.getElementById("setup").classList.remove("hidden")}
+function openAudit(){auditMode=true;resetNew();configureMode();hidePages();document.getElementById("setup").classList.remove("hidden")}
+function openConsignes(){hidePages();document.getElementById("consignes").classList.remove("hidden");renderConsignes()}
+function allPoints(){return [...new Set([...common["VUE ENSEMBLE"],...piston,...gear,...common["ELECTRIQUE"],...Object.values(auditGroups).flat()])]}
+function renderConsignes(){consignesList.innerHTML=allPoints().map((x,i)=>`<div class="consigne-row consigne-row-v2"><div><div class="consigne-name-label">Nom du point</div><input id="pn${i}" data-name-point="${esc(x)}" value="${esc(pointName(x))}" placeholder="Nom du point"></div><div><div class="consigne-text-label">Consigne</div><input id="cg${i}" data-point="${esc(x)}" value="${esc(consignes[x]||"")}" placeholder="Ex. 5–6 bar / 160 °C / valeur attendue"></div></div>`).join("")}
+function saveConsignes(){document.querySelectorAll("#consignesList input[data-point]").forEach(el=>consignes[el.dataset.point]=el.value.trim());document.querySelectorAll("#consignesList input[data-name-point]").forEach(el=>{const key=el.dataset.namePoint,val=el.value.trim();if(val&&val!==key)pointLabels[key]=val;else delete pointLabels[key]});localStorage.setItem("savConsignes",JSON.stringify(consignes));localStorage.setItem("savPointLabels",JSON.stringify(pointLabels));alert("Noms et consignes enregistrés ✓");render();renderFinal();paper()}
+async function openHistoryHome(){hidePages();document.getElementById("history").classList.remove("hidden");await showHistory()}
+async function loadRecent(){
+  if(!await ensureLogin()) {recentList.innerHTML='<span class="small">Connectez-vous lors du premier enregistrement pour voir les fiches.</span>';return}
+  let r=await sb.from("fiches_sav").select("id,client,numero_dm,reference_machine,numero_serie,date_creation,statut,etape_sav,motif,machines(gamme,technologie,type_bac)").order("date_creation",{ascending:false}).limit(5);
+  if(r.error){recentList.innerHTML='<span class="small">'+esc(r.error.message)+'</span>';return}
+  recentList.innerHTML=(r.data||[]).map(x=>`<div class="recent-item"><b>${(x.motif||"").startsWith(AUDIT_TAG)?"🔎 Audit client — ":""}${esc(x.client||"Sans client")}</b> — ${esc(x.machines?.gamme||"")}<br><span class="small">DM ${esc(x.numero_dm||"—")} • Réf. ${esc(x.reference_machine||"—")} • Série ${esc(x.numero_serie||"—")} • ${new Date(x.date_creation).toLocaleDateString("fr-FR")}</span><br><span class="sav-status ${stageInfo(x.etape_sav||"diagnostic").cls}">${stageInfo(x.etape_sav||"diagnostic").text}</span><br><button class="btn light" onclick="openSaved(${x.id})">Ouvrir</button></div>`).join("")||'<span class="small">Aucune fiche enregistrée.</span>';
+}
+async function signedPhoto(path){
+  if(!path)return "";
+  let r=await sb.storage.from("photos-sav").createSignedUrl(path,3600);
+  return r.error?"":r.data.signedUrl;
+}
+async function openSaved(id){
+  if(!await ensureLogin())return;
+  let f=await sb.from("fiches_sav").select("*,machines(*)").eq("id",id).single();
+  let c=await sb.from("controles").select("*").eq("fiche_id",id).order("ordre");
+  let pr=await sb.from("photos").select("controle_id,fichier").eq("fiche_id",id);
+  if(f.error||c.error||pr.error){alert((f.error||c.error||pr.error).message);return}
+  auditMode=(f.data.motif||"").startsWith(AUDIT_TAG);configureMode();currentFicheId=id; client.value=f.data.client||"";dm.value=f.data.numero_dm||"";machineRef.value=f.data.reference_machine||"";serial.value=f.data.numero_serie||"";tech.value=f.data.technicien_nom||"";reason.value=(f.data.motif||"").replace(/^\[AUDIT CLIENT\] /,"");
+  if(f.data.machines){machine.value=f.data.machines.gamme||"Micron";system.value=f.data.machines.technologie||"piston";tank.value=f.data.machines.type_bac||"5 L"}
+  status={};finalStatus={};photos={};finalPhotos={};controlIds={};arrivalBlob=null;arrivalPrintUrl="";arrivalPreview.style.display="none"; start();valClean.checked=!!f.data.machine_nettoyee;valNoFault.checked=!!f.data.aucun_defaut_actif;valMachine.checked=!!f.data.machine_validee;validationTech.value=f.data.technicien_nom||"";validationDate.value=f.data.date_validation||"";signatureData=f.data.signature_data||"";signatureDirty=false;setTimeout(initSignaturePad,80);
+  const orderByControl={};
+  c.data.forEach(x=>{orderByControl[x.id]=x.ordre;controlIds[x.ordre]=x.id;status[x.ordre]=x.resultat||"";finalStatus[x.ordre]=x.final_resultat||"";let v=document.getElementById("v"+x.ordre),n=document.getElementById("n"+x.ordre),fv=document.getElementById("fv"+x.ordre),fn=document.getElementById("fn"+x.ordre);if(v)v.value=x.valeur_mesuree||"";if(n)n.value=x.commentaire||"";if(fv)fv.value=x.final_valeur_mesuree||"";if(fn)fn.value=x.final_commentaire||""});
+  if(f.data.photo_arrivee){arrivalPrintUrl=await signedPhoto(f.data.photo_arrivee);if(arrivalPrintUrl){arrivalPreview.src=arrivalPrintUrl;arrivalPreview.style.display="block"}}
+  for(const x of pr.data||[]){let ord=orderByControl[x.controle_id];if(ord===undefined)continue;let u=await signedPhoto(x.fichier);if(u){photos[ord]??=[];photos[ord].push(u)}}
+  Object.keys(photos).forEach(i=>drawPhotos(Number(i)));
+  document.querySelectorAll("#mobile .point").forEach((p,i)=>{let st=status[i];if(st){let b=p.querySelector(".state."+st);if(b)b.classList.add("on")}});document.querySelectorAll("#finalMobile .point").forEach((p,i)=>{let st=finalStatus[i];if(st){let b=p.querySelector(".state."+st);if(b)b.classList.add("on")}});
+  update();
+}
+
+
+async function ensureLogin(){
+  let {data:{session}}=await sb.auth.getSession();
+  if(session)return true;
+  let email=prompt("E-mail Supabase :"); if(!email)return false;
+  let password=prompt("Mot de passe :"); if(!password)return false;
+  let {error}=await sb.auth.signInWithPassword({email,password});
+  if(error){alert("Connexion impossible : "+error.message);return false}
+  return true;
+}
+function setArrival(file){
+  if(!file)return;
+  arrivalBlob=file;
+  arrivalPrintUrl=URL.createObjectURL(file);
+  arrivalPreview.src=arrivalPrintUrl; arrivalPreview.style.display="block"; paper();
+}
+async function ensureMachine(){
+  let r=await sb.from("machines").select("id").eq("gamme",machine.value).eq("technologie",system.value).eq("type_bac",tank.value).limit(1);
+  if(r.error)throw r.error;
+  if(r.data.length)return r.data[0].id;
+  r=await sb.from("machines").insert({gamme:machine.value,technologie:system.value,type_bac:tank.value}).select("id").single();
+  if(r.error)throw r.error; return r.data.id;
+}
+async function uploadPhoto(blob,path){
+  let r=await sb.storage.from("photos-sav").upload(path,blob,{upsert:true,contentType:blob.type||"image/jpeg"});
+  if(r.error)throw r.error; return path;
+}
+async function saveToSupabase(){
+  if(!await ensureLogin())return;
+  try{
+    let mid=await ensureMachine(), arrivalPath=null;
+    if(arrivalBlob)arrivalPath=await uploadPhoto(arrivalBlob,"arrivees/"+Date.now()+"-"+(serial.value||"machine")+".jpg");
+    const ficheData={client:client.value,numero_dm:dm.value,reference_machine:machineRef.value,numero_serie:serial.value,machine_id:mid,technicien_nom:tech.value,motif:(auditMode?AUDIT_TAG:"")+reason.value,statut:(auditMode?getSavStage()==="termine":valMachine.checked)?"validee":"en_cours",etape_sav:getSavStage(),machine_nettoyee:!!valClean.checked,capots_remontes:false,aucun_defaut_actif:!!valNoFault.checked,absence_fuite:false,accessoires_presents:false,machine_validee:!!valMachine.checked,date_validation:validationDate.value||null,signature_data:signatureData||null};if(arrivalPath)ficheData.photo_arrivee=arrivalPath;
+    let ficheId=currentFicheId;
+    if(ficheId){let u=await sb.from("fiches_sav").update(ficheData).eq("id",ficheId);if(u.error)throw u.error}else{let f=await sb.from("fiches_sav").insert(ficheData).select("id").single();if(f.error)throw f.error;ficheId=f.data.id;currentFicheId=ficheId}
+    let idx=0;
+    for(const [cat,items] of Object.entries(groups())) for(const point of items){
+      const row={fiche_id:ficheId,categorie:cat,point,resultat:status[idx]||null,valeur_mesuree:document.getElementById("v"+idx)?.value||null,commentaire:document.getElementById("n"+idx)?.value||null,final_resultat:finalStatus[idx]||null,final_valeur_mesuree:document.getElementById("fv"+idx)?.value||null,final_commentaire:document.getElementById("fn"+idx)?.value||null,ordre:idx};
+      let cid=controlIds[idx];if(cid){let u=await sb.from("controles").update(row).eq("id",cid);if(u.error)throw u.error}else{let c=await sb.from("controles").insert(row).select("id").single();if(c.error)throw c.error;cid=c.data.id;controlIds[idx]=cid}
+      for(let k=0;k<(photos[idx]||[]).length;k++){if(/^https?:/.test(photos[idx][k]))continue;let blob=await (await fetch(photos[idx][k])).blob();let path=await uploadPhoto(blob,`fiches/${ficheId}/controle-${cid}-${Date.now()}-${k}.jpg`);let pr=await sb.from("photos").insert({fiche_id:ficheId,controle_id:cid,fichier:path});if(pr.error)throw pr.error}
+      idx++;
+    }
+    alert("Fiche enregistrée ✓");await loadRecent();
+  }catch(e){console.error(e);alert("Erreur d’enregistrement : "+e.message+"\n\nVérifie que la mise à jour SQL V9 a bien été exécutée dans Supabase.")}
+}
+async function showHistory(){
+  if(!await ensureLogin())return;
+  let r=await sb.from("fiches_sav").select("id,client,numero_dm,reference_machine,numero_serie,date_creation,statut,etape_sav,motif,machines(gamme,technologie,type_bac)").order("date_creation",{ascending:false});
+  if(r.error){alert(r.error.message);return}
+  historyRows=r.data||[]; document.getElementById("history").classList.remove("hidden"); filterHistory();
+}
+function filterHistory(){
+  let q=(historySearch.value||"").toLowerCase();
+  let rows=historyRows.filter(x=>JSON.stringify(x).toLowerCase().includes(q));
+  historyList.innerHTML=rows.map(x=>`<div style="padding:12px 0;border-bottom:1px solid #ddd"><b>${(x.motif||"").startsWith(AUDIT_TAG)?"🔎 Audit client — ":""}${esc(x.client||"Sans client")}</b> — ${esc(x.machines?.gamme||"")}<br><small>DM ${esc(x.numero_dm||"—")} • Réf. ${esc(x.reference_machine||"—")} • Série ${esc(x.numero_serie||"—")} • ${new Date(x.date_creation).toLocaleString("fr-FR")}</small><br><span class="sav-status ${stageInfo(x.etape_sav||"diagnostic").cls}">${stageInfo(x.etape_sav||"diagnostic").text}</span><div class="history-actions"><button class="btn light" onclick="openSaved(${x.id})">Ouvrir la fiche</button><button class="btn danger" onclick="deleteFiche(${x.id},'${esc(x.client||"cette fiche").replace(/'/g,"&#39;")}')">🗑</button></div></div>`).join("")||"<p>Aucune fiche.</p>";
+}
+async function deleteFiche(id,label){
+  if(!await ensureLogin())return;
+  if(!confirm(`Supprimer définitivement la fiche « ${label} » ?\n\nLa fiche, ses contrôles et ses photos seront supprimés.`))return;
+  try{
+    const f=await sb.from("fiches_sav").select("photo_arrivee").eq("id",id).single();
+    const pr=await sb.from("photos").select("fichier").eq("fiche_id",id);
+    if(f.error)throw f.error;if(pr.error)throw pr.error;
+    const paths=[];if(f.data?.photo_arrivee)paths.push(f.data.photo_arrivee);(pr.data||[]).forEach(x=>{if(x.fichier)paths.push(x.fichier)});
+    if(paths.length){const rm=await sb.storage.from("photos-sav").remove(paths);if(rm.error)throw rm.error}
+    const d=await sb.from("fiches_sav").delete().eq("id",id);if(d.error)throw d.error;
+    if(currentFicheId===id)currentFicheId=null;
+    await showHistory();await loadRecent();
+  }catch(e){console.error(e);alert("Suppression impossible : "+e.message)}
+}
+async function sharePhaseReport(phase){
+  try{if(auditMode){paper();await createAndSharePdf("Audit_client");return;}
+    paper();
+    const sheets=[...paperEl.querySelectorAll('.pdf-sheet')];
+    const main=phase==="diagnostic"?sheets[0]:sheets[1];
+    if(!main)throw new Error("Page du rapport introuvable");
+    const cards=photoCards().filter(c=>phase==="diagnostic"?c.phase==='diag':c.phase==='final');
+    const photoHtml=photoSheetsForCards(cards,phase,1);
+    paperEl.innerHTML=main.outerHTML+photoHtml;
+    await createAndSharePdf(phase==="diagnostic"?"Diagnostic":"Controle_final");
+    paper();
+  }catch(e){paperEl.removeAttribute("style");paper();if(e.name!=="AbortError"){console.error(e);alert("Impossible de créer le PDF : "+e.message)}}
+}
+async function createAndSharePdf(prefix){
+ const imgs=[...paperEl.querySelectorAll("img")];for(const im of imgs){if(/^https?:/.test(im.src)){try{let b=await(await fetch(im.src)).blob();let data=await new Promise((ok,no)=>{let r=new FileReader();r.onload=()=>ok(r.result);r.onerror=no;r.readAsDataURL(b)});im.src=data}catch(e){}}}
+ paperEl.style.display="block";paperEl.style.position="fixed";paperEl.style.left="-10000px";paperEl.style.top="0";paperEl.style.width="210mm";paperEl.style.background="white";paperEl.style.padding="8mm";
+ await new Promise(r=>setTimeout(r,120));
+ const {jsPDF}=window.jspdf,doc=new jsPDF("p","mm","a4"),sheets=[...paperEl.querySelectorAll('.pdf-sheet')];
+ for(let i=0;i<sheets.length;i++){const canvas=await html2canvas(sheets[i],{scale:1.7,useCORS:true,backgroundColor:"#ffffff",logging:false});if(i)doc.addPage();doc.addImage(canvas.toDataURL("image/jpeg",.9),"JPEG",8,8,194,281)}
+ paperEl.removeAttribute("style");const blob=doc.output("blob"),safe=(client.value||"Client").replace(/[^a-z0-9_-]+/gi,"_"),file=new File([blob],`${prefix}_SAV_${safe}_${serial.value||"sans_serie"}.pdf`,{type:"application/pdf"});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]})))await navigator.share({title:`${prefix.replace("_"," ")} - ${client.value||machine.value}`,files:[file]});else{const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(u),3000)}
+}
+async function shareReport(){try{paper();await createAndSharePdf("Rapport")}catch(e){paperEl.removeAttribute("style");if(e.name!=="AbortError"){console.error(e);alert("Impossible de créer le PDF : "+e.message)}}}
+
+function pickFinal(i,s,b){
+  finalStatus[i]=s;
+  if(valMachine.checked&&unresolvedDiagnosticActions().length)valMachine.checked=false;
+  renderFinal();refreshSavStatus();paper()
+}
+function pick(i,s,b){
+  status[i]=s;
+  b.parentElement.querySelectorAll(".state").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  if(valMachine.checked&&unresolvedDiagnosticActions().length)valMachine.checked=false;
+  renderFinal();update()
+}
+function update(){let n=Object.keys(status).filter(k=>status[k]).length;counter.textContent=n+" / "+total;bar.style.width=(total?100*n/total:0)+"%";refreshSavStatus();paper()}
+function statusLabel(s){return {ok:"OK",watch:"À SURVEILLER",bad:"À REMPLACER",na:"N/A"}[s]||"NON RENSEIGNÉ"}
+function statusClass(s){return {ok:"status-ok",watch:"status-watch",bad:"status-bad",na:"status-na"}[s]||"status-empty"}
+function diagnosticBlocks(){
+  let html="",idx=0,shown=0;
+  for(const [g,items] of Object.entries(groups())){
+    let rows="";
+    items.forEach(x=>{let i=idx++,st=status[i]||"",note=$("#n"+i)?.value||"";if(st==="na")return;shown++;rows+=`<tr><td class="col-num">${shown}</td><td class="col-point"><b>${esc(pointName(x))}</b></td><td class="col-status"><span class="status-chip ${statusClass(st)}">${statusLabel(st)}</span></td><td>${esc(note)||"—"}</td></tr>`});
+    if(rows)html+=`<div class="report-category"><div class="report-category-title">${esc(g)}</div><table class="report-table"><thead><tr><th class="col-num">N°</th><th class="col-point">Point de contrôle</th><th class="col-status">État</th><th>Commentaire / action</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+  return html;
+}
+function finalBlocks(){
+  let html="",idx=0,shown=0;
+  for(const [g,items] of Object.entries(groups())){
+    let rows="";
+    items.forEach(x=>{let i=idx++,st=finalStatus[i]||"",note=$("#fn"+i)?.value||"",diagSt=status[i]||"";if(diagSt==="na"||st==="na")return;shown++;let needs=diagSt==="watch"||diagSt==="bad",resolved=needs&&st==="ok",diagNote=$("#n"+i)?.value||"",flag=needs?`<br><span class="report-action-badge ${resolved?"resolved":""}">${resolved?(diagSt==="bad"?"ANOMALIE DIAGNOSTIC CORRIGÉE":"POINT RECONTRÔLÉ"):diagSt==="bad"?"ACTION REQUISE AU DIAGNOSTIC":"POINT À SURVEILLER"}</span>${diagNote?`<br><small>${esc(diagNote)}</small>`:""}`:"";rows+=`<tr class="${needs?"report-action-row":""} ${resolved?"resolved":""}"><td class="col-num">${shown}</td><td class="col-point"><b>${esc(pointName(x))}</b>${flag}</td><td><span class="status-chip ${statusClass(st)}">${st==="ok"?"OK":st==="bad"?"NOK":"NON RENSEIGNÉ"}</span></td><td>${esc(note)||"—"}</td></tr>`});
+    if(rows)html+=`<div class="report-category"><div class="report-category-title">${esc(g)}</div><table class="report-table"><thead><tr><th class="col-num">N°</th><th class="col-point">Point contrôlé</th><th>Résultat</th><th>Commentaire</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+  return html;
+}
+function finalSummary(){
+  let corrected=[],watch=[],remaining=[],idx=0;
+  for(const [g,items] of Object.entries(groups()))items.forEach(x=>{let i=idx++,d=status[i]||"",f=finalStatus[i]||"",dn=$("#n"+i)?.value||"",fn=$("#fn"+i)?.value||"";if(d==="na")return;if(d==="bad"&&f==="ok")corrected.push(`<b>${esc(pointName(x))}</b>${fn?` — ${esc(fn)}`:dn?` — ${esc(dn)}`:""}`);if(d==="watch")watch.push(`<b>${esc(pointName(x))}</b>${fn?` — ${esc(fn)}`:dn?` — ${esc(dn)}`:""}`);if((d==="bad"&&f!=="ok")||f==="bad")remaining.push(`<b>${esc(pointName(x))}</b>${fn?` — ${esc(fn)}`:dn?` — ${esc(dn)}`:""}`)});
+  let lines=[];
+  if(corrected.length)lines.push(`<div class="summary-line summary-ok"><span class="summary-label">✓ Anomalies corrigées :</span> ${corrected.join(" ; ")}</div>`);
+  if(watch.length)lines.push(`<div class="summary-line summary-watch"><span class="summary-label">⚠ Points à surveiller :</span> ${watch.join(" ; ")}</div>`);
+  if(remaining.length)lines.push(`<div class="summary-line summary-bad"><span class="summary-label">✕ Points restant NOK :</span> ${remaining.join(" ; ")}</div>`);
+  if(!lines.length)lines.push(`<div class="summary-line summary-ok">✓ Aucun écart particulier à signaler à l’issue du contrôle.</div>`);
+  return `<div class="summary-box"><div class="summary-title">Synthèse du contrôle final</div>${lines.join("")}</div>`;
+}
+function brandBand(){return `<div class="brand-band"><img class="logo-print" src="${MELER_LOGO}"><div class="brand-copy"><b>Focke Meler</b>Hot Melt Adhesive Solutions</div></div>`}
+function infoRows(){const arrival=arrivalPrintUrl?`<img class="arrival-info-photo" src="${arrivalPrintUrl}">`:`<div class="arrival-info-empty">Aucune photo d’arrivée</div>`;return `<div class="info-grid with-arrival"><div class="info-card"><div class="info-card-title">👤 Client</div><div class="info-row"><b>Nom</b><span>${esc(client.value)||"—"}</span></div><div class="info-row"><b>N° DM</b><span>${esc(dm.value)||"—"}</span></div><div class="info-row"><b>Technicien</b><span>${esc(tech.value)||"—"}</span></div></div><div class="info-card"><div class="info-card-title">⚙ Machine</div><div class="info-row"><b>Modèle</b><span>${esc(machine.value)||"—"}</span></div><div class="info-row"><b>Référence</b><span>${esc(machineRef.value)||"—"}</span></div><div class="info-row"><b>N° de série</b><span>${esc(serial.value)||"—"}</span></div><div class="info-row"><b>Configuration</b><span>${system.value==="piston"?"Piston":"Engrenage"} • Bac ${esc(tank.value)}</span></div></div><div class="info-card arrival-info-card"><div class="info-card-title">📷 Machine à l’arrivée</div>${arrival}</div></div>`}
+function diagnosticModelTable(){let html='',idx=0,n=0;for(const[g,items]of Object.entries(groups())){let rows='';items.forEach(x=>{let i=idx++,st=status[i]||'',note=$('#n'+i)?.value||'';if(st==='na')return;n++;let icon=st==='ok'?'✓':st==='watch'?'!':st==='bad'?'×':'—',cls=st==='ok'?'dot-ok':st==='watch'?'dot-watch':st==='bad'?'dot-bad':'dot-empty',ph=(photos[i]||[]).slice(0,2).map(p=>`<img class="mini-thumb" src="${p}">`).join('');rows+=`<tr><td class="model-num">${n}</td><td class="model-point">${esc(pointName(x))}</td><td class="model-result"><span class="dot-status ${cls}">${icon}</span></td><td>${esc(note)||'—'}</td><td class="model-photo">${ph||'—'}</td></tr>`});if(rows)html+=`<tr class="model-cat"><td colspan="5">${esc(g)}</td></tr>${rows}`}return `<table class="model-table"><thead><tr><th class="model-num">#</th><th class="model-point">Point de contrôle</th><th class="model-result">Résultat</th><th>Observations</th><th class="model-photo">Photos</th></tr></thead><tbody>${html}</tbody></table>`}
+function finalModelTable(){let html='',idx=0,n=0;for(const[g,items]of Object.entries(groups())){let rows='';items.forEach(x=>{let i=idx++,st=finalStatus[i]||'',d=status[i]||'',note=$('#fn'+i)?.value||'',dn=$('#n'+i)?.value||'';if(d==='na'||st==='na')return;n++;let icon=st==='ok'?'✓':st==='bad'?'×':'—',cls=st==='ok'?'dot-ok':st==='bad'?'dot-bad':'dot-empty',hist=(d==='bad'&&st==='ok')?`<span class="diag-history fixed">NOK au diagnostic → corrigé</span>`:(d==='watch'?`<span class="diag-history">À surveiller au diagnostic${dn?` : ${esc(dn)}`:''}</span>`:''),ph=(finalPhotos[i]||[]).slice(0,2).map(p=>`<img class="mini-thumb" src="${p}">`).join('');rows+=`<tr><td class="model-num">${n}</td><td class="model-point">${esc(pointName(x))}${hist}</td><td class="model-result"><span class="dot-status ${cls}">${icon}</span></td><td>${esc(note)||'—'}</td><td class="model-photo">${ph||'—'}</td></tr>`});if(rows)html+=`<tr class="model-cat"><td colspan="5">${esc(g)}</td></tr>${rows}`}return `<table class="model-table"><thead><tr><th class="model-num">#</th><th class="model-point">Point de contrôle</th><th class="model-result">Résultat</th><th>Observations</th><th class="model-photo">Photos</th></tr></thead><tbody>${html}</tbody></table>`}
+function summaryMini(){let corrected=[],watch=[],remaining=[],idx=0;for(const[g,items]of Object.entries(groups()))items.forEach(x=>{let i=idx++,d=status[i]||'',f=finalStatus[i]||'',dn=$('#n'+i)?.value||'',fn=$('#fn'+i)?.value||'';if(d==='na'||f==='na')return;if(d==='bad'&&f==='ok')corrected.push(`${esc(pointName(x))}${fn?` — ${esc(fn)}`:''}`);if(d==='watch')watch.push(`${esc(pointName(x))}${fn?` — ${esc(fn)}`:dn?` — ${esc(dn)}`:''}`);if(f==='bad'||(d==='bad'&&f!=='ok'))remaining.push(`${esc(pointName(x))}${fn?` — ${esc(fn)}`:''}`)});let a=[];if(corrected.length)a.push(`<div class="ok"><b>✓ NOK devenus OK</b><br>${corrected.join(' ; ')}</div>`);if(watch.length)a.push(`<div class="watch"><b>! Points à surveiller</b><br>${watch.join(' ; ')}</div>`);if(remaining.length)a.push(`<div class="bad"><b>× Points restant NOK</b><br>${remaining.join(' ; ')}</div>`);if(!a.length)a.push(`<div class="ok"><b>✓ Contrôle final</b><br>Aucun écart particulier à signaler.</div>`);return `<div class="final-summary-mini">${a.join('')}</div>`}
+function footer(page,total){return `<div class="report-footer"><span><b>Focke Meler France</b> • ${auditMode?"Audit client":"Contrôle SAV Atelier"}</span><span>${page} / ${total}</span></div>`}
+function photoCards(){let out=[],idx=0;for(const[g,items]of Object.entries(groups()))items.forEach(x=>{let i=idx++,d=status[i]||'';if(d==='na')return;let dn=$('#n'+i)?.value||'',fn=$('#fn'+i)?.value||'';(photos[i]||[]).forEach((p,k)=>out.push({phase:'diag',point:pointName(x),img:p,cap:dn||statusLabel(d)}));(finalPhotos[i]||[]).forEach((p,k)=>out.push({phase:'final',point:pointName(x),img:p,cap:fn||((d==='bad'&&finalStatus[i]==='ok')?'Anomalie corrigée après intervention':'État après intervention')}))});return out}
+function photoSheetsForCards(cards,phase,basePages){if(!cards.length)return '';let chunks=[];for(let i=0;i<cards.length;i+=8)chunks.push(cards.slice(i,i+8));let total=basePages+chunks.length;let phaseTitle=phase==='diagnostic'?'PHOTOS DU DIAGNOSTIC':phase==='final'?'PHOTOS DU CONTRÔLE FINAL':'PHOTOS & TRAÇABILITÉ';let phaseSub=phase==='diagnostic'?'État à l’arrivée / avant intervention':phase==='final'?'État après intervention / avant réexpédition':'État avant / après intervention';return chunks.map((chunk,ci)=>`<section class="pdf-sheet">${brandBand()}<h1 class="photo-page-title">${phaseTitle}</h1><div class="photo-page-sub">Contrôle SAV Atelier • ${phaseSub}</div><div class="pdf-idline"><span><b>N° DM :</b> ${esc(dm.value)||'—'}</span><span><b>Client :</b> ${esc(client.value)||'—'}</span><span><b>Technicien :</b> ${esc(validationTech.value||tech.value)||'—'}</span></div><div class="photo-pairs">${chunk.map(c=>`<div class="model-photo-card ${c.phase==='final'?'final':''}"><div class="model-photo-head"><span>${esc(c.point)} — ${c.phase==='final'?'Contrôle final':'Diagnostic'}</span><span class="phase-pill">${c.phase==='final'?'APRÈS':'AVANT'}</span></div><img src="${c.img}"><div class="model-photo-caption">${esc(c.cap)||'—'}</div></div>`).join('')}</div>${footer(basePages+1+ci,total)}</section>`).join('')}
+function photoSheets(totalBase=2){const cards=photoCards();return photoSheetsForCards(cards,'all',2)}
+function paper(){if(auditMode)return paperAudit();const today=new Date().toLocaleDateString('fr-FR'),vdate=validationDate.value?new Date(validationDate.value+'T12:00:00').toLocaleDateString('fr-FR'):today,cards=photoCards(),total=2+Math.ceil(cards.length/8);const diag=`<section class="pdf-sheet compact">${brandBand()}<div class="pdf-topline"><div><h1 class="pdf-main-title">RAPPORT DE DIAGNOSTIC</h1><div class="pdf-subtitle">Contrôle SAV Atelier</div></div></div><div class="pdf-idline"><span><b>N° DM :</b> ${esc(dm.value)||'—'}</span><span><b>Date :</b> ${today}</span><span><b>Technicien :</b> ${esc(tech.value)||'—'}</span></div>${infoRows()}<div class="reason-box"><b>▣ Motif du retour</b><br>${esc(reason.value)||'Non renseigné'}</div><div class="model-section-title">Résultats du diagnostic</div>${diagnosticModelTable()}<div class="pdf-diag-legend"><span class="diag-legend-item"><i class="diag-legend-dot ok"></i>Vert — RAS</span><span class="diag-legend-item"><i class="diag-legend-dot watch"></i>Jaune — À surveiller</span><span class="diag-legend-item"><i class="diag-legend-dot bad"></i>Rouge — À remplacer</span></div><div class="reason-box"><b>Conclusion du diagnostic</b><br>${Object.values(status).some(s=>s==='bad'||s==='watch')?'Plusieurs points nécessitent une action ou une surveillance avant expédition.':'Aucun écart particulier relevé lors du diagnostic.'}</div>${footer(1,total)}</section>`;const fin=`<section class="pdf-sheet compact">${brandBand()}<div class="pdf-topline"><div><h1 class="pdf-main-title">RAPPORT DE CONTRÔLE FINAL</h1><div class="pdf-subtitle">Contrôle SAV Atelier</div></div></div><div class="pdf-idline"><span><b>N° DM :</b> ${esc(dm.value)||'—'}</span><span><b>Date :</b> ${vdate}</span><span><b>Technicien :</b> ${esc(validationTech.value||tech.value)||'—'}</span></div>${infoRows()}<div class="conclusion-box"><b>✓ Conclusion</b><br>Les points signalés lors du diagnostic ont été recontrôlés. La synthèse ci-dessous distingue les anomalies corrigées et les points restant à surveiller.</div>${summaryMini()}<div class="model-section-title">Résultats du contrôle final</div>${finalModelTable()}<div class="validation-model"><div><h3>✓ Validation</h3><div class="validation-checks validation-checks-three"><span>${valClean.checked?'☑':'☐'} Équipement nettoyé</span><span>${valNoFault.checked?'☑':'☐'} Aucun défaut actif</span><b>${valMachine.checked?'☑':'☐'} Équipement validé</b></div></div><div class="signature-model"><h3>Validation technicien</h3><div>${esc(validationTech.value||tech.value)||'—'} • ${vdate}</div>${signatureData?`<img src="${signatureData}">`:'<div style="margin-top:5mm">Signature : __________________</div>'}</div></div>${footer(2,total)}</section>`;paperEl.innerHTML=diag+fin+photoSheets()}
+
+
+
+function paperAudit(){
+ const today=new Date().toLocaleDateString('fr-FR'),cards=photoCards().filter(c=>c.phase==='diag'),total=1+Math.ceil(cards.length/8);
+ const alerts=Object.values(status).filter(x=>x==='bad'||x==='watch').length;
+ const main=`<section class="pdf-sheet compact">${brandBand()}<div class="pdf-topline"><div><h1 class="pdf-main-title">RAPPORT D’AUDIT CLIENT</h1><div class="pdf-subtitle">Diagnostic technique sur site</div></div></div><div class="pdf-idline"><span><b>N° DM :</b> ${esc(dm.value)||'—'}</span><span><b>Date :</b> ${today}</span><span><b>Technicien :</b> ${esc(tech.value)||'—'}</span></div>${infoRows()}<div class="reason-box"><b>▣ Motif / contexte de l'audit</b><br>${esc(reason.value)||'Non renseigné'}</div><div class="model-section-title">Contrôle de la machine, des tuyaux et applicateurs</div>${diagnosticModelTable()}<div class="pdf-diag-legend"><span class="diag-legend-item"><i class="diag-legend-dot ok"></i>Vert — RAS</span><span class="diag-legend-item"><i class="diag-legend-dot watch"></i>Jaune — À surveiller</span><span class="diag-legend-item"><i class="diag-legend-dot bad"></i>Rouge — À remplacer</span></div><div class="reason-box"><b>Conclusion de l'audit</b><br>${alerts?`${alerts} point(s) à surveiller ou nécessitant une intervention. Voir les observations détaillées ci-dessus.`:'Aucune anomalie signalée parmi les points renseignés.'}</div><div class="validation-model"><div><h3>Visa technicien</h3>${esc(tech.value)||'—'} • ${today}<br>Signature : __________________</div><div class="signature-model"><h3>Visa client</h3>Nom : __________________<br><br>Signature : __________________</div></div>${footer(1,total)}</section>`;
+ paperEl.innerHTML=main+photoSheetsForCards(cards,'diagnostic',1).replaceAll('Contrôle SAV Atelier •','Audit client •').replaceAll('PHOTOS DU DIAGNOSTIC','PHOTOS DE L’AUDIT');
+}
+
+const paperEl=document.getElementById("paper");
+loadRecent();
+</script></body></html>
